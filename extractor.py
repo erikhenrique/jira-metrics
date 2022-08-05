@@ -19,12 +19,15 @@ def search_issues(project, months_ago=6):
 
 def merge_metrics(issues, metrics):
     fields = [
+        'created',
         'summary',
         'labels',
         'assignee',
         'issuetype',
         'status',
-        'votes'
+        'votes',
+        'resolutiondate',
+        'customfield_10024' # votação
     ]
 
     result = []
@@ -60,5 +63,3 @@ def extract():
 
 
 extract()
-
-

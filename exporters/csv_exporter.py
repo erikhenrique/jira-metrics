@@ -1,12 +1,11 @@
 import csv
 
-
 from exporters.exporter import Exporter
 
 
 class CSVExport(Exporter):
-    def export(self, issues) -> None:
 
+    def export(self, issues) -> None:
         headers = self.build_headers(issues)
 
         with open('csv_exporter.csv', 'w', newline='') as csvfile:
