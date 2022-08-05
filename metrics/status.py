@@ -6,7 +6,7 @@ from collections import defaultdict
 def time_by_status(issues) -> None:
 
     metric = {
-        'total_status': set(),
+        'all_statuses': set(),
         'results': []
     }
 
@@ -20,11 +20,12 @@ def time_by_status(issues) -> None:
                 if item.field == 'status':
                     created = parser.isoparse(history.created)
 
-                    metric['total_status'].add(item.toString)
-                    metric['total_status'].add(item.fromString)
+                    metric['all_statuses'].add(item.toString)
+                    metric['all_statuses'].add(item.fromString)
 
                     if last_event_date:
-                        total_seconds_status[item.toString] += (last_event_date - created).total_seconds()
+                        total_time_in_hours = int((last_event_date - created).total_seconds() / 60)
+                        total_seconds_status[item.toString] += total_time_in_hours
                     
                     last_event_date = created
 
