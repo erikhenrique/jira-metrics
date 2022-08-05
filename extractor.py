@@ -13,7 +13,7 @@ def search_issues(project, months_ago=6):
     
     query = f'project={project} AND created <= -{months_ago}m'
 
-    return jira.search_issues(query, expand='changelog')
+    return jira.search_issues(query, expand='changelog', maxResults=False)
 
 
 
@@ -33,9 +33,7 @@ def merge_metrics(issues, metrics):
     result = []
 
     for issue in issues:
-        issue_dict = {
-            'key': issue.key,
-        }
+        issue_dict = { 'key': issue.key }
 
         for field in fields:
             issue_dict[field] = getattr(issue.fields, field)
