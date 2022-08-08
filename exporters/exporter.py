@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import dateutil.parser
+
 
 class Exporter(ABC):
 
@@ -8,6 +10,46 @@ class Exporter(ABC):
         for issue in issues:
             headers.update(issue.keys())
         return headers
+
+    def parse_date(self, date):
+        return dateutil.parser.isoparse(date).strftime("%m/%d/%Y %H:%M:%S") if date else ''
+
+    def format_field(self, field, value):
+        if field in ('created', 'resolutiondate'):
+            return self.parse_date(value)
+        return value
+
+    def merge_metric(self, issues, metrics):
+        fields = [
+            'created',
+            'summary',
+            'labels',
+            'assignee',
+            'issuetype',
+            'status',
+            'votes',
+            'resolutiondate',
+            'customfield_10024' # votação
+        ]
+
+        result = []
+
+        for issue in issues:
+            issue_dict = { 'key': issue.key }
+
+            for field in fields:
+                issue_dict[field] = self.format_field(
+                    field,
+                    getattr(issue.fields, field)
+                )
+
+            for metric in metrics['results']:
+                if metric['key'] == issue.key:
+                    issue_dict = dict(issue_dict, **metric)
+
+            result.append(issue_dict)
+
+        return result
     
     @abstractmethod
     def export(self, issues) -> None:
