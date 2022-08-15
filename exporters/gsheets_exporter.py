@@ -5,7 +5,7 @@ from exporters.exporter import Exporter
 
 
 class GSheetsExport(Exporter):
-    url = 'https://docs.google.com/spreadsheets/d/1tRq9cyAAKWqe7hcp6aRVBl4bjw90So7UuUKrHZAU6ag/edit?usp=sharing'
+    url = ''
 
     rows = [
         'key',
