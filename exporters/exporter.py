@@ -20,14 +20,13 @@ class Exporter(ABC):
         return value
 
     def merge_metric(self, issues, metrics):
-        fields = [
+        fields_to_extract = [
             'created',
             'summary',
             'labels',
             'assignee',
             'issuetype',
             'status',
-            'votes',
             'resolutiondate',
             'customfield_10024' # votação
         ]
@@ -37,7 +36,7 @@ class Exporter(ABC):
         for issue in issues:
             issue_dict = { 'key': issue.key }
 
-            for field in fields:
+            for field in fields_to_extract:
                 issue_dict[field] = self.format_field(
                     field,
                     getattr(issue.fields, field)
