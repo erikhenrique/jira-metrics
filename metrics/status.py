@@ -24,17 +24,17 @@ def time_by_status(issues, upstream_statuses, downstream_statuses) -> None:
                     metric['all_statuses'].add(item.fromString)
 
                     if last_event_date:
-                        total_time_in_hours = int(
-                            (last_event_date - created).total_seconds() / 60
+                        total_time_in_days = int(
+                            (last_event_date - created).total_seconds() / 3600
                         )
-                        total_hours_status[item.toString] += total_time_in_hours
+                        total_hours_status[item.toString] += total_time_in_days
 
                         if item.toString in upstream_statuses:
-                            total_hours_status['upstream'] += total_time_in_hours
+                            total_hours_status['upstream'] += total_time_in_days
 
                         if item.toString in downstream_statuses:
-                            total_hours_status['downstream'] += total_time_in_hours
-                    
+                            total_hours_status['downstream'] += total_time_in_days
+
                     last_event_date = created
 
         metric['results'].append(total_hours_status)
