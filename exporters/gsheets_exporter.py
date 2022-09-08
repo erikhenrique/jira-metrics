@@ -5,9 +5,8 @@ from exporters.exporter import Exporter
 
 
 class GSheetsExport(Exporter):
-    url = ''
 
-    rows = [
+    details_rows = [
         'key',
         'summary',
         'issuetype',
@@ -17,32 +16,19 @@ class GSheetsExport(Exporter):
         'resolutiondate',
         'customfield_10024',
         'status',
-        'In Progress',
-        'A Iniciar',
-        'Testes',
-        'Concluído',
-        'Validação 2',
-        'Pool de Ideias',
-        'Aguardando Desenvolvimento',
-        'Em Homologação',
-        'Atividade bloqueada',
-        'Backlog',
-        'Pronto p/ DEV',
-        'Detalhamento da Hipótese',
-        'Code Review',
-        'Cancelado',
-        'Priorizados',
-        'Discovery Concluído',
-        'Em desenvolvimento',
-        'Atividade finalizada',
-        'Refining',
-        'Done',
+    ]
+
+    statistical_rows = [
         'upstream',
         'downstream'
     ]
 
+    rows = details_rows + statistical_rows
 
-    def __init__(self):
+
+    def __init__(self, url, upstream_statuses, downstream_statuses):
+        self.url = url
+        self.all_rows =  self.rows + upstream_statuses + downstream_statuses
         self.google = gspread.oauth()        
 
 
@@ -56,12 +42,12 @@ class GSheetsExport(Exporter):
         worksheet = sheet.get_worksheet(0)
         worksheet.clear()
 
-        worksheet.append_row(self.rows)
+        worksheet.append_row(self.all_rows)
 
         formatted_sheet = []
         for issue in issues_merged:
             row = []
-            for field in self.rows:
+            for field in self.all_rows:
                 if issue.get(field):
                     row.append(str(issue.get(field)))
                 else:
