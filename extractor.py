@@ -1,6 +1,7 @@
 from jira import JIRA
 
 from metrics.status import time_by_status
+from metrics.sprint import sprint_statistics
 from exporters.csv_exporter import CSVExport
 from exporters.gsheets_exporter import GSheetsExport
 
@@ -16,14 +17,27 @@ def search_issues(project, months_ago):
     return jira.search_issues(query, expand='changelog', maxResults=False)
 
 
-def extract(project, upstream_statuses, downstream_statuses, months_ago=1, google_sheets_url=None):
+def extract(
+    project,
+    upstream_statuses,
+    downstream_statuses,
+    months_ago=1,
+    sprint_field=None,
+    google_sheets_url=None
+):
     issues = search_issues(project=project, months_ago=months_ago)
 
-    metric = time_by_status(
+    time_metric = time_by_status(
         issues,
         upstream_statuses=upstream_statuses,
         downstream_statuses=downstream_statuses
     )
+
+    metrics = [time_metric,]
+
+    if sprint_field:
+        sprint_metric = sprint_statistics(issues)
+        metrics.append(sprint_metric)
 
     # exporter = CSVExport()
     # exporter.export(issues, metric)
@@ -31,9 +45,10 @@ def extract(project, upstream_statuses, downstream_statuses, months_ago=1, googl
     sheets = GSheetsExport(
         url=google_sheets_url,
         upstream_statuses=upstream_statuses,
-        downstream_statuses=downstream_statuses
+        downstream_statuses=downstream_statuses,
+        sprint_field=sprint_field
     )
-    sheets.export(issues, metric)
+    sheets.export(issues, metrics)
 
 
 def extract_produto_busca():
@@ -85,6 +100,7 @@ def extract_im():
             'ACEITO',
             'PRONTO P/ DEPLOY EM PROD',
         ],
+        sprint_field='customfield_10020',
         google_sheets_url=''
     )
 

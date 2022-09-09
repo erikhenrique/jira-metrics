@@ -23,19 +23,27 @@ class GSheetsExport(Exporter):
         'downstream'
     ]
 
+    sprint_statistical_rows = [
+        'total_sprints',
+    ]
+
     rows = details_rows + statistical_rows
 
 
-    def __init__(self, url, upstream_statuses, downstream_statuses):
+    def __init__(self, url, upstream_statuses, downstream_statuses, sprint_field):
         self.url = url
         self.all_rows =  self.rows + upstream_statuses + downstream_statuses
+
+        if sprint_field:
+            self.all_rows = self.all_rows + self.sprint_statistical_rows
+
         self.google = gspread.oauth()        
 
 
-    def export(self, issues, metric) -> None:
+    def export(self, issues, metrics) -> None:
         sheet = self.google.open_by_url(self.url)
 
-        issues_merged = self.merge_metric(issues, metric)
+        issues_merged = self.merge_metric(issues, metrics)
 
         sheet = self.google.open_by_url(self.url)
 
@@ -45,6 +53,7 @@ class GSheetsExport(Exporter):
         worksheet.append_row(self.all_rows)
 
         formatted_sheet = []
+
         for issue in issues_merged:
             row = []
             for field in self.all_rows:

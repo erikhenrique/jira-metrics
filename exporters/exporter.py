@@ -42,9 +42,11 @@ class Exporter(ABC):
                     getattr(issue.fields, field)
                 )
 
-            for metric in metrics['results']:
-                if metric['key'] == issue.key:
-                    issue_dict = dict(issue_dict, **metric)
+            for metric in metrics:
+                for metric_result in metric['results']:
+                    if metric_result['key'] == issue.key:
+                        issue_dict = dict(issue_dict, **metric_result)
+
 
             result.append(issue_dict)
 
