@@ -25,6 +25,7 @@ class GSheetsExport(Exporter):
 
     sprint_statistical_rows = [
         'total_sprints',
+        'actual_sprint',
     ]
 
     rows = details_rows + statistical_rows
